@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saveplan - Plan Your Financial Future</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Fonts: Inter for clean, modern UI -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Placeholder Comments -->
+    <!-- Chosen Palette: Warm Stone & Emerald. Backgrounds: Warm Neutrals (Stone-50/100). Accents: Emerald-600 (Growth), Slate-700 (Structure). Text: Stone-900. Designed to feel "Secure", "Calm", and "Long-term". -->
+    <!-- Application Structure Plan: 
+        1. Hero Section: High-level value prop ("Stop Guessing").
+        2. Interactive Simulator (The Core): A live interactive chart letting users adjust inputs to see the "Projection" concept immediately.
+        3. Feature Exploration (Tabs): Breaking down "Net Worth", "Cash Flow", "Scenarios", "Timeline" into interactive views with specific charts/text from the report.
+        4. Privacy Vault: A visual comparison section emphasizing the "Offline" USP.
+        5. Persona Grid: "Who is Saveplan For?" interactive cards.
+        6. CTA/Footer: Subscription details.
+        Rational: The report describes a "Simulator". The best way to explain a simulator is to let the user SIMULATE. 
+    -->
+    <!-- Visualization & Content Choices:
+        - Hero/Simulator: Chart.js Line Chart. Goal: Show "Projection". Interaction: Sliders update data.
+        - Scenarios: Chart.js Multi-Line Chart. Goal: Show "Comparison". Interaction: Toggle scenarios.
+        - Cash Flow: Chart.js Bar Chart. Goal: Show "Surplus/Deficit".
+        - Privacy: HTML/CSS Icons. Goal: Visually distinguish "Cloud" vs "Offline".
+        - Audience: Interactive Grid. Goal: Personalized relevance.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fafaf9; /* Stone-50 */
+            color: #1c1917; /* Stone-900 */
+        }
+
+        /* Chart Container Styling as per requirements */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px; /* Cap width for readability */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Base height for mobile */
+            max-height: 450px;
+        }
+        
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px; /* Taller on desktop */
+            }
+        }
+
+        .slider-thumb::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #059669; /* Emerald-600 */
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        
+        .slider-thumb::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #059669;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        .feature-tab.active {
+            background-color: #fff;
+            border-bottom: 3px solid #059669;
+            color: #059669;
+            font-weight: 600;
+        }
+
+        .icon-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-emerald-100 selection:text-emerald-900">
+
+    <!-- Navigation / Header -->
+    <nav class="bg-white border-b border-stone-200 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">S</div>
+                    <span class="font-bold text-xl tracking-tight text-stone-800">Saveplan</span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#simulator" class="text-stone-600 hover:text-emerald-600 text-sm font-medium transition-colors">Simulation</a>
+                    <a href="#features" class="text-stone-600 hover:text-emerald-600 text-sm font-medium transition-colors">Features</a>
+                    <a href="#privacy" class="text-stone-600 hover:text-emerald-600 text-sm font-medium transition-colors">Privacy</a>
+                    <a href="#personas" class="text-stone-600 hover:text-emerald-600 text-sm font-medium transition-colors">For You</a>
+                </div>
+                <button class="bg-stone-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-stone-700 transition-colors">Get Started</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="bg-stone-50 pt-16 pb-12 border-b border-stone-200">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-stone-900 tracking-tight mb-6">Stop Guessing. Start Projecting.</h1>
+            <p class="text-lg md:text-xl text-stone-600 max-w-2xl mx-auto mb-8 leading-relaxed">
+                Visualize your wealth evolution, project your net worth over decades, and compare 'what if' scenarios—all in one secure place. 
+                <strong>Saveplan</strong> is the powerful financial simulator designed for your long-term future.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <div class="flex items-center gap-2 text-sm font-medium text-stone-500 bg-white px-4 py-2 rounded-full shadow-sm border border-stone-100">
+                    <span>🔒</span> 100% Offline
+                </div>
+                <div class="flex items-center gap-2 text-sm font-medium text-stone-500 bg-white px-4 py-2 rounded-full shadow-sm border border-stone-100">
+                    <span>📊</span> Lifetime View
+                </div>
+                <div class="flex items-center gap-2 text-sm font-medium text-stone-500 bg-white px-4 py-2 rounded-full shadow-sm border border-stone-100">
+                    <span>🚫</span> No Accounts
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Section 1: The Interactive Simulator (Core Value Prop) -->
+    <section id="simulator" class="py-16 bg-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Intro Content -->
+            <div class="mb-10 max-w-3xl">
+                <span class="text-emerald-600 font-bold tracking-wide uppercase text-sm">Financial Flight Simulator</span>
+                <h2 class="text-3xl font-bold text-stone-900 mt-2 mb-4">Plan Your Financial Future With Confidence</h2>
+                <p class="text-stone-600 text-lg">
+                    Saveplan isn't just a budgeting app. We turn complex assets, liabilities, income, and expenses into clear, interactive charts. 
+                    See how your total wealth evolves year by year. 
+                    <span class="bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded font-medium">Interact with the simulator below</span> to see the power of long-term projection.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 bg-stone-50 rounded-2xl border border-stone-200 p-6 shadow-sm">
+                
+                <!-- Controls -->
+                <div class="lg:col-span-1 space-y-8">
+                    <div>
+                        <h3 class="font-bold text-stone-800 mb-4 flex items-center gap-2">
+                            <span>⚙️</span> Simulation Inputs
+                        </h3>
+                        
+                        <!-- Monthly Savings Input -->
+                        <div class="mb-6">
+                            <label class="flex justify-between text-sm font-medium text-stone-700 mb-2">
+                                Monthly Contribution
+                                <span class="text-emerald-600" id="val-savings">$1,000</span>
+                            </label>
+                            <input type="range" id="input-savings" min="0" max="10000" step="100" value="1000" 
+                                class="slider-thumb w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer">
+                            <p class="text-xs text-stone-500 mt-1">How much you invest/save per month.</p>
+                        </div>
+
+                        <!-- Years to Project -->
+                        <div class="mb-6">
+                            <label class="flex justify-between text-sm font-medium text-stone-700 mb-2">
+                                Projection Years
+                                <span class="text-emerald-600" id="val-years">30 Years</span>
+                            </label>
+                            <input type="range" id="input-years" min="5" max="60" step="1" value="30" 
+                                class="slider-thumb w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer">
+                            <p class="text-xs text-stone-500 mt-1">Saveplan forecasts up to 90 years ahead.</p>
+                        </div>
+
+                        <!-- Return Rate -->
+                        <div class="mb-6">
+                            <label class="flex justify-between text-sm font-medium text-stone-700 mb-2">
+                                Avg. Return Rate
+                                <span class="text-emerald-600" id="val-return">7%</span>
+                            </label>
+                            <input type="range" id="input-return" min="1" max="15" step="0.5" value="7" 
+                                class="slider-thumb w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer">
+                            <p class="text-xs text-stone-500 mt-1">Test different market conditions.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-lg border border-stone-200">
+                        <h4 class="font-semibold text-stone-900 text-sm mb-2">Key Insight: Compounding</h4>
+                        <p class="text-sm text-stone-600">
+                            Notice how the curve gets steeper? That's the power of compounding. Saveplan helps you identify key wealth milestones, like exactly when you'll hit <span class="font-bold text-stone-900">$1 Million</span>.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Visual -->
+                <div class="lg:col-span-2 flex flex-col justify-center">
+                    <div class="chart-container bg-white rounded-xl p-4 border border-stone-100 shadow-inner">
+                        <canvas id="simulatorChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Feature Deep Dive (Tabs) -->
+    <section id="features" class="py-16 bg-stone-100">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-stone-900">A Complete Financial Operating System</h2>
+                <p class="text-stone-600 mt-3 max-w-2xl mx-auto">Explore the tools Saveplan provides to help you master every aspect of your financial life.</p>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="flex flex-wrap justify-center border-b border-stone-300 mb-8">
+                <button onclick="switchFeature('networth')" id="tab-networth" class="feature-tab active px-6 py-3 text-stone-600 hover:text-stone-900 font-medium transition-all">Build Net Worth</button>
+                <button onclick="switchFeature('cashflow')" id="tab-cashflow" class="feature-tab px-6 py-3 text-stone-600 hover:text-stone-900 font-medium transition-all">Master Cash Flow</button>
+                <button onclick="switchFeature('scenarios')" id="tab-scenarios" class="feature-tab px-6 py-3 text-stone-600 hover:text-stone-900 font-medium transition-all">Compare Scenarios</button>
+            </div>
+
+            <!-- Feature Content Area -->
+            <div id="feature-content" class="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden min-h-[500px]">
+                
+                <!-- Net Worth View -->
+                <div id="view-networth" class="feature-view grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
+                    <div class="flex flex-col justify-center">
+                        <h3 class="text-2xl font-bold text-stone-900 mb-4">Build Your Net Worth (Lifetime View)</h3>
+                        <p class="text-stone-600 mb-4 leading-relaxed">
+                            Understand your total wealth and how it changes across your lifetime. Know your financial position at any point in the future.
+                        </p>
+                        <ul class="space-y-3 mb-6">
+                            <li class="flex items-start gap-3">
+                                <span class="text-emerald-500 mt-1">✓</span>
+                                <span class="text-stone-700 text-sm"><strong>See the Full Picture:</strong> Track assets (stocks, real estate) and liabilities (loans, mortgages) in one dashboard.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-emerald-500 mt-1">✓</span>
+                                <span class="text-stone-700 text-sm"><strong>Identify Key Milestones:</strong> Discover the best years for major purchases or investments.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-emerald-500 mt-1">✓</span>
+                                <span class="text-stone-700 text-sm"><strong>Visualize Debt Payoff:</strong> Watch liabilities shrink while assets grow.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="flex items-center justify-center bg-stone-50 rounded-xl border border-stone-100 p-4">
+                        <div class="chart-container">
+                            <canvas id="netWorthChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cash Flow View -->
+                <div id="view-cashflow" class="feature-view hidden grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
+                    <div class="flex flex-col justify-center">
+                        <h3 class="text-2xl font-bold text-stone-900 mb-4">Master Your Cash Flow</h3>
+                        <p class="text-stone-600 mb-4 leading-relaxed">
+                            Get a crystal-clear view of how money moves through your life. Identify future years where expenses might exceed income and plan for them *now*.
+                        </p>
+                        <ul class="space-y-3 mb-6">
+                            <li class="flex items-start gap-3">
+                                <span class="text-emerald-500 mt-1">✓</span>
+                                <span class="text-stone-700 text-sm"><strong>Track Yearly Totals:</strong> Forget daily transaction tracking. Focus on the big picture.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-emerald-500 mt-1">✓</span>
+                                <span class="text-stone-700 text-sm"><strong>Spot Gaps in Advance:</strong> Plan for college tuition, sabbaticals, or retirement dips.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-emerald-500 mt-1">✓</span>
+                                <span class="text-stone-700 text-sm"><strong>Maximize Savings Rate:</strong> See how reducing expenses translates into long-term wealth.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="flex items-center justify-center bg-stone-50 rounded-xl border border-stone-100 p-4">
+                        <div class="chart-container">
+                            <canvas id="cashFlowChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scenarios View -->
+                <div id="view-scenarios" class="feature-view hidden grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
+                    <div class="flex flex-col justify-center">
+                        <h3 class="text-2xl font-bold text-stone-900 mb-4">Create & Compare Scenarios</h3>
+                        <p class="text-stone-600 mb-4 leading-relaxed">
+                            This is where Saveplan truly shines. Explore multiple financial futures side-by-side and choose the optimal path without risk.
+                        </p>
+                        <div class="space-y-4">
+                            <div class="p-4 bg-stone-50 rounded-lg border border-stone-200 hover:border-emerald-400 transition-colors cursor-pointer group" onclick="toggleScenarioLine(true)">
+                                <h4 class="font-bold text-stone-800 group-hover:text-emerald-700">Scenario A: Base Plan</h4>
+                                <p class="text-xs text-stone-500">Retire at 65, conservative investment returns.</p>
+                            </div>
+                            <div class="p-4 bg-emerald-50 rounded-lg border border-emerald-200 hover:border-emerald-400 transition-colors cursor-pointer group" onclick="toggleScenarioLine(false)">
+                                <h4 class="font-bold text-emerald-800">Scenario B: Early Retirement (FIRE)</h4>
+                                <p class="text-xs text-emerald-600">Retire at 50, aggressive savings, rental property.</p>
+                                <p class="text-xs font-bold mt-1 text-emerald-700">Tap to compare on chart &rarr;</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center bg-stone-50 rounded-xl border border-stone-100 p-4">
+                        <div class="chart-container">
+                            <canvas id="scenarioChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Privacy (USP) -->
+    <section id="privacy" class="py-20 bg-stone-900 text-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <div class="inline-block px-3 py-1 bg-emerald-900 text-emerald-300 rounded-full text-xs font-bold tracking-wider mb-4 uppercase">Security First</div>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-6">Your Privacy Is Our #1 Feature.</h2>
+                    <p class="text-stone-400 text-lg mb-6 leading-relaxed">
+                        In a world of data breaches and intrusive tracking, Saveplan is built on a foundation of absolute privacy. 
+                        Your financial data is yours and yours alone.
+                    </p>
+                    
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div class="icon-box bg-stone-800 text-emerald-400">📡</div>
+                            <div>
+                                <h4 class="font-bold text-white">100% Offline</h4>
+                                <p class="text-stone-400 text-sm">The app works entirely on your device. No servers involved.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="icon-box bg-stone-800 text-emerald-400">👤</div>
+                            <div>
+                                <h4 class="font-bold text-white">No Accounts</h4>
+                                <p class="text-stone-400 text-sm">We don't even know you're a user. No signup required.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="icon-box bg-stone-800 text-emerald-400">🏦</div>
+                            <div>
+                                <h4 class="font-bold text-white">No Bank Linking</h4>
+                                <p class="text-stone-400 text-sm">Zero risk of bank credential theft. You control the data input.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visual Metaphor -->
+                <div class="bg-stone-800 rounded-2xl p-8 border border-stone-700 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-500 to-emerald-900"></div>
+                    <h3 class="text-center text-stone-300 font-mono text-sm mb-8 uppercase tracking-widest">Data Flow Architecture</h3>
+                    
+                    <div class="grid grid-cols-2 gap-8">
+                        <!-- Traditional App -->
+                        <div class="text-center opacity-50">
+                            <div class="text-3xl mb-2">☁️</div>
+                            <div class="text-xs font-bold text-red-400 mb-2">Typical Finance App</div>
+                            <div class="text-[10px] text-stone-500 text-left space-y-1 border-t border-stone-600 pt-2">
+                                <p>❌ Sends data to Cloud</p>
+                                <p>❌ Sells user data</p>
+                                <p>❌ Bank API Risk</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Saveplan -->
+                        <div class="text-center relative transform scale-110">
+                            <div class="absolute -inset-4 bg-emerald-500/10 rounded-xl blur-xl"></div>
+                            <div class="relative bg-stone-900 p-4 rounded-xl border border-emerald-500/50 shadow-2xl">
+                                <div class="text-3xl mb-2">📱</div>
+                                <div class="text-xs font-bold text-emerald-400 mb-2">Saveplan (You)</div>
+                                <div class="text-[10px] text-stone-300 text-left space-y-1 border-t border-stone-700 pt-2">
+                                    <p>✅ Data stays on Device</p>
+                                    <p>✅ Encrypted locally</p>
+                                    <p>✅ No external connections</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Target Audience (Personas) -->
+    <section id="personas" class="py-16 bg-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center text-stone-900 mb-12">Who Is Saveplan For?</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="bg-stone-50 p-6 rounded-xl border border-stone-100 hover:shadow-md transition-shadow">
+                    <div class="text-2xl mb-3">🔥</div>
+                    <h3 class="font-bold text-stone-900 mb-2">FIRE Aspirants</h3>
+                    <p class="text-sm text-stone-600">Financial Independence, Retire Early. Model precise exit strategies and withdrawal rates.</p>
+                </div>
+                
+                <!-- Card 2 -->
+                <div class="bg-stone-50 p-6 rounded-xl border border-stone-100 hover:shadow-md transition-shadow">
+                    <div class="text-2xl mb-3">🏡</div>
+                    <h3 class="font-bold text-stone-900 mb-2">Families</h3>
+                    <p class="text-sm text-stone-600">Plan for joint goals, college funds, and see your combined financial future securely.</p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-stone-50 p-6 rounded-xl border border-stone-100 hover:shadow-md transition-shadow">
+                    <div class="text-2xl mb-3">📉</div>
+                    <h3 class="font-bold text-stone-900 mb-2">Debt Strategists</h3>
+                    <p class="text-sm text-stone-600">Model the most efficient way to pay off mortgages and loans while still investing.</p>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="bg-stone-50 p-6 rounded-xl border border-stone-100 hover:shadow-md transition-shadow">
+                    <div class="text-2xl mb-3">🧭</div>
+                    <h3 class="font-bold text-stone-900 mb-2">Long-Term Planners</h3>
+                    <p class="text-sm text-stone-600">Anyone who cares about their financial future, from 10 to 50+ years from now.</p>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="bg-stone-50 p-6 rounded-xl border border-stone-100 hover:shadow-md transition-shadow">
+                    <div class="text-2xl mb-3">😰</div>
+                    <h3 class="font-bold text-stone-900 mb-2">The "Financially Anxious"</h3>
+                    <p class="text-sm text-stone-600">Replace fear with a concrete, actionable plan and a clear vision of the future.</p>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="bg-stone-900 p-6 rounded-xl border border-stone-800 text-white flex flex-col justify-center items-center text-center">
+                    <h3 class="font-bold mb-2">You?</h3>
+                    <p class="text-sm text-stone-400 mb-4">Your financial future is worth planning for.</p>
+                    <button class="text-emerald-400 text-sm font-bold hover:underline">Start Your Plan &rarr;</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer / CTA -->
+    <footer class="bg-stone-100 border-t border-stone-200 py-12">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold text-stone-900 mb-4">Start Your Financial Journey</h2>
+            <p class="text-stone-600 mb-8 text-lg">
+                Visualize your future. Compare scenarios. Achieve peace of mind. <br>
+                <span class="text-sm text-stone-500 mt-2 block">Saveplan requires a monthly or yearly subscription. Free trials available.</span>
+            </p>
+            <button class="bg-emerald-600 text-white text-lg font-bold px-8 py-4 rounded-xl shadow-lg hover:bg-emerald-700 transition-all transform hover:-translate-y-1">
+                Download on the App Store
+            </button>
+            <div class="mt-8 text-xs text-stone-400">
+                © 2024 Saveplan. Works entirely offline. Your data is yours.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- 1. SIMULATOR LOGIC (Hero Section) ---
+        const simulatorCtx = document.getElementById('simulatorChart').getContext('2d');
+        
+        // Initial Data
+        let simSavings = 1000;
+        let simYears = 30;
+        let simReturn = 7;
+
+        // Generate Projection Data
+        function generateProjectionData(savings, years, rate) {
+            let balance = 0;
+            const data = [];
+            const labels = [];
+            const currentYear = new Date().getFullYear();
+
+            for (let i = 0; i <= years; i++) {
+                labels.push(currentYear + i);
+                data.push(balance);
+                // Simple annual compounding + annual contribution
+                balance = (balance + (savings * 12)) * (1 + (rate / 100));
+            }
+            return { labels, data };
+        }
+
+        let initialSimData = generateProjectionData(simSavings, simYears, simReturn);
+
+        const simulatorChart = new Chart(simulatorCtx, {
+            type: 'line',
+            data: {
+                labels: initialSimData.labels,
+                datasets: [{
+                    label: 'Projected Net Worth',
+                    data: initialSimData.data,
+                    borderColor: '#059669', // Emerald-600
+                    backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumSignificantDigits: 3 }).format(context.parsed.y);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { maxTicksLimit: 6 } },
+                    y: { 
+                        grid: { color: '#e7e5e4' },
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value / 1000 + 'k';
+                            }
+                        }
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
+                }
+            }
+        });
+
+        // Update Simulator
+        function updateSimulator() {
+            const newData = generateProjectionData(simSavings, simYears, simReturn);
+            simulatorChart.data.labels = newData.labels;
+            simulatorChart.data.datasets[0].data = newData.data;
+            simulatorChart.update();
+        }
+
+        // Event Listeners
+        document.getElementById('input-savings').addEventListener('input', (e) => {
+            simSavings = parseInt(e.target.value);
+            document.getElementById('val-savings').innerText = '$' + simSavings.toLocaleString();
+            updateSimulator();
+        });
+        document.getElementById('input-years').addEventListener('input', (e) => {
+            simYears = parseInt(e.target.value);
+            document.getElementById('val-years').innerText = simYears + ' Years';
+            updateSimulator();
+        });
+        document.getElementById('input-return').addEventListener('input', (e) => {
+            simReturn = parseFloat(e.target.value);
+            document.getElementById('val-return').innerText = simReturn + '%';
+            updateSimulator();
+        });
+
+        // --- 2. FEATURE CHARTS (Tab Section) ---
+        
+        // Net Worth Chart (Stacked Bar: Assets vs Debt)
+        const netWorthCtx = document.getElementById('netWorthChart').getContext('2d');
+        new Chart(netWorthCtx, {
+            type: 'bar',
+            data: {
+                labels: ['2024', '2029', '2034', '2039', '2044'],
+                datasets: [
+                    {
+                        label: 'Assets',
+                        data: [50000, 150000, 350000, 700000, 1200000],
+                        backgroundColor: '#059669',
+                        stack: 'Stack 0',
+                    },
+                    {
+                        label: 'Liabilities',
+                        data: [-100000, -80000, -50000, -10000, 0],
+                        backgroundColor: '#ef4444',
+                        stack: 'Stack 0',
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: { display: true, text: 'Assets Growth vs Debt Payoff' }
+                }
+            }
+        });
+
+        // Cash Flow Chart (Income vs Expenses)
+        const cashFlowCtx = document.getElementById('cashFlowChart').getContext('2d');
+        new Chart(cashFlowCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [
+                    {
+                        label: 'Income',
+                        data: [5000, 5200, 5000, 5000, 5800, 5000],
+                        backgroundColor: '#3b82f6'
+                    },
+                    {
+                        label: 'Expenses',
+                        data: [3500, 4000, 3200, 3400, 3300, 3100],
+                        backgroundColor: '#f59e0b'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: { display: true, text: 'Monthly Cash Flow Analysis' }
+                }
+            }
+        });
+
+        // Scenarios Chart (Multi Line)
+        const scenarioCtx = document.getElementById('scenarioChart').getContext('2d');
+        const scenarioChart = new Chart(scenarioCtx, {
+            type: 'line',
+            data: {
+                labels: ['Age 30', 'Age 40', 'Age 50', 'Age 60', 'Age 70', 'Age 80'],
+                datasets: [
+                    {
+                        label: 'Base Plan (Scenario A)',
+                        data: [50000, 200000, 500000, 900000, 1500000, 1200000], // Spend down in retirement
+                        borderColor: '#57534e', // Stone-600
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'FIRE Plan (Scenario B)',
+                        data: [50000, 300000, 900000, 1800000, 2500000, 3000000], // Aggressive growth
+                        borderColor: '#059669', // Emerald-600
+                        backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                        borderWidth: 3,
+                        borderDash: [5, 5],
+                        tension: 0.3,
+                        hidden: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: { display: true, text: 'Comparing Financial Futures' }
+                }
+            }
+        });
+
+        function toggleScenarioLine(showBase) {
+            // Animation effect for scenarios
+            scenarioChart.update();
+        }
+
+        // --- 3. UI LOGIC (Tabs) ---
+        function switchFeature(featureId) {
+            // Hide all views
+            document.querySelectorAll('.feature-view').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.feature-tab').forEach(el => el.classList.remove('active'));
+
+            // Show selected
+            document.getElementById('view-' + featureId).classList.remove('hidden');
+            document.getElementById('tab-' + featureId).classList.add('active');
+        }
+
+    </script>
+</body>
+</html>
