@@ -44,9 +44,14 @@
             <div class="flex justify-between h-16 items-center">
                 <!-- Logo links to main site -->
                 <a href="https://www.saveplan.com" class="flex items-center gap-3 hover:opacity-90 transition-opacity">
-                    <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center text-white shadow-lg">
-                        <i class="fa-solid fa-chart-simple"></i>
-                    </div>
+                    <!-- Custom SVG Icon based on uploaded image - Slope corrected for linear progression -->
+                    <svg class="w-8 h-8" viewBox="0 0 24 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="0" y="12" width="3.5" height="8" rx="1.75" class="fill-rose-400"/>
+                        <rect x="5" y="9" width="3.5" height="11" rx="1.75" class="fill-emerald-400"/>
+                        <rect x="10" y="6" width="3.5" height="14" rx="1.75" class="fill-blue-400"/>
+                        <rect x="15" y="3" width="3.5" height="17" rx="1.75" class="fill-amber-400"/>
+                        <rect x="20" y="0" width="3.5" height="20" rx="1.75" class="fill-purple-400"/>
+                    </svg>
                     <span class="font-bold text-xl tracking-tight text-white">Saveplan</span>
                 </a>
                 
@@ -171,8 +176,8 @@
                     <p class="text-slate-600 mb-4">
                         If you have specific questions about our strict privacy architecture or suggestions for the app, please contact us.
                     </p>
-                    <a href="mailto:support@saveplan.com" class="inline-flex items-center gap-2 text-slate-900 font-bold hover:text-purple-600 transition-colors">
-                        <i class="fa-solid fa-envelope text-purple-600"></i> support@saveplan.com
+                    <a href="mailto:support@saveplan.com" class="inline-flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-purple-600 transition-colors shadow-md">
+                        <i class="fa-solid fa-envelope"></i> Contact Support
                     </a>
                 </div>
             </section>
@@ -185,7 +190,7 @@
         <div class="max-w-4xl mx-auto px-4 text-center">
             <div class="mb-6 text-3xl text-slate-300"><i class="fa-solid fa-shield-halved"></i></div>
             <p class="text-slate-500 text-sm mb-8">
-                Saveplan. Your future, your data.
+                &copy; 2012 Saveplan. Your future, your data.
             </p>
             <div class="flex justify-center gap-6 text-sm font-medium text-slate-600">
                 <a href="https://www.saveplan.com" class="hover:text-purple-600 transition-colors">Home</a>
